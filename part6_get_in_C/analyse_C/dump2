@@ -1,0 +1,423 @@
+
+stack2:     file format elf32-littlearm
+
+Disassembly of section .text:
+
+00000000 <func1>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)   @多于4个参数
+{
+   0:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)@保存main函数的栈帧底部指针FP
+   4:	e28db000 	add	fp, sp, #0	; 0x0
+   8:	e24dd01c 	sub	sp, sp, #28	; 0x1c  @由栈帧顶部指针SP创建一片栈帧保存子函数的前四个参数
+   c:	e50b0010 	str	r0, [fp, #-16]	@ a
+  10:	e50b1014 	str	r1, [fp, #-20]	@ b
+  14:	e50b2018 	str	r2, [fp, #-24]	@ c
+  18:	e50b301c 	str	r3, [fp, #-28]	@ d
+	int k;
+	k=e+f;
+  1c:	e59b3004 	ldr	r3, [fp, #4]	@在子函数的栈帧中实现第五个参数与第六个参数的运算
+  20:	e59b2008 	ldr	r2, [fp, #8]    @由ldr	r2, [fp, #8]知参数保存在main函数的栈帧中，并运算
+  24:	e0833002 	add	r3, r3, r2		@以子函数的栈帧底部指针（fp）做参考坐标实现对参数的查找
+  28:	e50b3008 	str	r3, [fp, #-8]
+}
+  2c:	e28bd000 	add	sp, fp, #0	; 0x0
+  30:	e8bd0800 	pop	{fp}
+  34:	e12fff1e 	bx	lr
+
+00000038 <main>:
+
+int main()
+{
+  38:	e92d4800 	push	{fp, lr}	@由于调用子函数，先保存main函数的栈帧底部指针FP和返回地址LR（当前PC指针的下一地址）
+  3c:	e28db004 	add	fp, sp, #4	; 0x4 @可知先压入FP，后压入lr.把此时子函数（被调用者）的栈帧底部指针FP指向保存在子函数栈帧的main函数（调用者）的栈帧底部指针FP
+  40:	e24dd008 	sub	sp, sp, #8	; 0x8	@创建栈
+    func1(1,2,3,4,5,6);
+  44:	e3a03005 	mov	r3, #5	; 0x5
+  48:	e58d3000 	str	r3, [sp]
+  4c:	e3a03006 	mov	r3, #6	; 0x6
+  50:	e58d3004 	str	r3, [sp, #4]
+  54:	e3a00001 	mov	r0, #1	; 0x1  @用通用寄存器保存前四个参数的值
+  58:	e3a01002 	mov	r1, #2	; 0x2
+  5c:	e3a02003 	mov	r2, #3	; 0x3
+  60:	e3a03004 	mov	r3, #4	; 0x4
+  64:	ebfffffe 	bl	0 <func1>
+    return 0;
+  68:	e3a03000 	mov	r3, #0	; 0x0
+}
+  6c:	e1a00003 	mov	r0, r3
+  70:	e24bd004 	sub	sp, fp, #4	; 0x4
+  74:	e8bd4800 	pop	{fp, lr}
+  78:	e12fff1e 	bx	lr
+Disassembly of section .debug_abbrev:
+
+00000000 <.debug_abbrev>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	25011101 	strcs	r1, [r1, #-257]
+   4:	030b130e 	movweq	r1, #45838	; 0xb30e
+   8:	110e1b0e 	tstne	lr, lr, lsl #22
+   c:	10011201 	andne	r1, r1, r1, lsl #4
+  10:	02000006 	andeq	r0, r0, #6	; 0x6
+  14:	0b0b0024 	bleq	2c00ac <main+0x2c0074>
+  18:	0e030b3e 	vmoveq.16	d3[0], r0
+	int k;
+	k=e+f;
+  1c:	24030000 	strcs	r0, [r3]
+  20:	3e0b0b00 	fmacdcc	d0, d11, d0
+  24:	0008030b 	andeq	r0, r8, fp, lsl #6
+  28:	00240400 	eoreq	r0, r4, r0, lsl #8
+}
+  2c:	0b3e0b0b 	bleq	f82c60 <main+0xf82c28>
+  30:	2e050000 	cdpcs	0, 0, cr0, cr5, cr0, {0}
+  34:	030c3f01 	movweq	r3, #52993	; 0xcf01
+
+int main()
+{
+  38:	3b0b3a0e 	blcc	2ce878 <main+0x2ce840>
+  3c:	110c270b 	tstne	ip, fp, lsl #14
+  40:	40011201 	andmi	r1, r1, r1, lsl #4
+    func1(1,2,3,4,5,6);
+  44:	00130106 	andseq	r0, r3, r6, lsl #2
+  48:	00050600 	andeq	r0, r5, r0, lsl #12
+  4c:	0b3a0803 	bleq	e82060 <main+0xe82028>
+  50:	13490b3b 	movtne	r0, #39739	; 0x9b3b
+  54:	00000a02 	andeq	r0, r0, r2, lsl #20
+  58:	03003407 	movweq	r3, #1031	; 0x407
+  5c:	3b0b3a08 	blcc	2ce884 <main+0x2ce84c>
+  60:	0213490b 	andseq	r4, r3, #180224	; 0x2c000
+  64:	0800000a 	stmdaeq	r0, {r1, r3}
+    return 0;
+  68:	0c3f002e 	ldceq	0, cr0, [pc], #-184
+}
+  6c:	0b3a0e03 	bleq	e83880 <main+0xe83848>
+  70:	13490b3b 	movtne	r0, #39739	; 0x9b3b
+  74:	01120111 	tsteq	r2, r1, lsl r1
+  78:	00000640 	andeq	r0, r0, r0, asr #12
+	...
+Disassembly of section .debug_info:
+
+00000000 <.debug_info>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	000000f8 	strdeq	r0, [r0], -r8
+   4:	00000002 	andeq	r0, r0, r2
+   8:	01040000 	tsteq	r4, r0
+   c:	000000b5 	strheq	r0, [r0], -r5
+  10:	00008b01 	andeq	r8, r0, r1, lsl #22
+  14:	00000e00 	andeq	r0, r0, r0, lsl #28
+  18:	00000000 	andeq	r0, r0, r0
+	int k;
+	k=e+f;
+  1c:	00007c00 	andeq	r7, r0, r0, lsl #24
+  20:	00000000 	andeq	r0, r0, r0
+  24:	07040200 	streq	r0, [r4, -r0, lsl #4]
+  28:	0000003c 	andeq	r0, r0, ip, lsr r0
+}
+  2c:	99080102 	stmdbls	r8, {r1, r8}
+  30:	02000000 	andeq	r0, r0, #0	; 0x0
+  34:	00780702 	rsbseq	r0, r8, r2, lsl #14
+
+int main()
+{
+  38:	04020000 	streq	r0, [r2]
+  3c:	00004f07 	andeq	r4, r0, r7, lsl #30
+  40:	06010200 	streq	r0, [r1], -r0, lsl #4
+    func1(1,2,3,4,5,6);
+  44:	000000cb 	andeq	r0, r0, fp, asr #1
+  48:	c1050202 	tstgt	r5, r2, lsl #4
+  4c:	03000000 	movweq	r0, #0	; 0x0
+  50:	6e690504 	cdpvs	5, 6, cr0, cr9, cr4, {0}
+  54:	08020074 	stmdaeq	r2, {r2, r4, r5, r6}
+  58:	00000005 	andeq	r0, r0, r5
+  5c:	07080200 	streq	r0, [r8, -r0, lsl #4]
+  60:	00000061 	andeq	r0, r0, r1, rrx
+  64:	ac050402 	cfstrsge	mvf0, [r5], {2}
+    return 0;
+  68:	04000000 	streq	r0, [r0]
+}
+  6c:	01020704 	tsteq	r2, r4, lsl #14
+  70:	00009408 	andeq	r9, r0, r8, lsl #8
+  74:	49010500 	stmdbmi	r1, {r8, sl}
+  78:	01000000 	tsteq	r0, r0
+  7c:	00000105 	andeq	r0, r0, r5, lsl #2
+  80:	00380000 	eorseq	r0, r8, r0
+  84:	00000000 	andeq	r0, r0, r0
+  88:	00e30000 	rsceq	r0, r3, r0
+  8c:	61060000 	tstvs	r6, r0
+  90:	4f040100 	svcmi	0x00040100
+  94:	02000000 	andeq	r0, r0, #0	; 0x0
+  98:	62066c91 	andvs	r6, r6, #37120	; 0x9100
+  9c:	4f040100 	svcmi	0x00040100
+  a0:	02000000 	andeq	r0, r0, #0	; 0x0
+  a4:	63066891 	movwvs	r6, #26769	; 0x6891
+  a8:	4f040100 	svcmi	0x00040100
+  ac:	02000000 	andeq	r0, r0, #0	; 0x0
+  b0:	64066491 	strvs	r6, [r6], #-1169
+  b4:	4f040100 	svcmi	0x00040100
+  b8:	02000000 	andeq	r0, r0, #0	; 0x0
+  bc:	65066091 	strvs	r6, [r6, #-145]
+  c0:	4f040100 	svcmi	0x00040100
+  c4:	02000000 	andeq	r0, r0, #0	; 0x0
+  c8:	66060091 	undefined
+  cc:	4f040100 	svcmi	0x00040100
+  d0:	02000000 	andeq	r0, r0, #0	; 0x0
+  d4:	6b070491 	blvs	1c1320 <main+0x1c12e8>
+  d8:	4f060100 	svcmi	0x00060100
+  dc:	02000000 	andeq	r0, r0, #0	; 0x0
+  e0:	08007491 	stmdaeq	r0, {r0, r4, r7, sl, ip, sp, lr}
+  e4:	0000a701 	andeq	sl, r0, r1, lsl #14
+  e8:	4f0b0100 	svcmi	0x000b0100
+  ec:	38000000 	stmdacc	r0, {}
+  f0:	7c000000 	stcvc	0, cr0, [r0], {0}
+  f4:	2b000000 	blcs	8 <.debug_info+0x8>
+  f8:	00000000 	andeq	r0, r0, r0
+Disassembly of section .debug_line:
+
+00000000 <.debug_line>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	00000039 	andeq	r0, r0, r9, lsr r0
+   4:	001f0002 	andseq	r0, pc, r2
+   8:	01020000 	tsteq	r2, r0
+   c:	000d0efb 	strdeq	r0, [sp], -fp
+  10:	01010101 	tsteq	r1, r1, lsl #2
+  14:	01000000 	tsteq	r0, r0
+  18:	00010000 	andeq	r0, r1, r0
+	int k;
+	k=e+f;
+  1c:	63617473 	cmnvs	r1, #1929379840	; 0x73000000
+  20:	632e326b 	teqvs	lr, #-1342177274	; 0xb0000006
+  24:	00000000 	andeq	r0, r0, r0
+  28:	02050000 	andeq	r0, r5, #0	; 0x0
+}
+  2c:	00000000 	andeq	r0, r0, r0
+  30:	6983d816 	stmibvs	r3, {r1, r2, r4, fp, ip, lr, pc}
+  34:	2f210867 	svccs	0x00210867
+
+int main()
+{
+  38:	01000802 	tsteq	r0, r2, lsl #16
+  3c:	Address 0x0000003c is out of bounds.
+
+Disassembly of section .debug_frame:
+
+00000000 <.debug_frame>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	0000000c 	.word	0x0000000c
+   4:	ffffffff 	.word	0xffffffff
+   8:	7c010001 	.word	0x7c010001
+   c:	000d0c0e 	.word	0x000d0c0e
+  10:	00000014 	.word	0x00000014
+	...
+	int k;
+	k=e+f;
+  1c:	00000038 	.word	0x00000038
+  20:	8b040e44 	.word	0x8b040e44
+  24:	0b0d4401 	.word	0x0b0d4401
+  28:	00000018 	.word	0x00000018
+}
+  2c:	00000000 	.word	0x00000000
+  30:	00000038 	.word	0x00000038
+  34:	00000044 	.word	0x00000044
+
+int main()
+{
+  38:	8e080e44 	.word	0x8e080e44
+  3c:	44028b01 	.word	0x44028b01
+  40:	00040b0c 	.word	0x00040b0c
+Disassembly of section .debug_loc:
+
+00000000 <.debug_loc>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	00000000 	.word	0x00000000
+   4:	00000004 	.word	0x00000004
+   8:	045d0001 	.word	0x045d0001
+   c:	08000000 	.word	0x08000000
+  10:	02000000 	.word	0x02000000
+  14:	08047d00 	.word	0x08047d00
+  18:	38000000 	.word	0x38000000
+	int k;
+	k=e+f;
+  1c:	02000000 	.word	0x02000000
+  20:	00047b00 	.word	0x00047b00
+  24:	00000000 	.word	0x00000000
+  28:	38000000 	.word	0x38000000
+}
+  2c:	3c000000 	.word	0x3c000000
+  30:	01000000 	.word	0x01000000
+  34:	003c5d00 	.word	0x003c5d00
+
+int main()
+{
+  38:	00400000 	.word	0x00400000
+  3c:	00020000 	.word	0x00020000
+  40:	0040087d 	.word	0x0040087d
+    func1(1,2,3,4,5,6);
+  44:	007c0000 	.word	0x007c0000
+  48:	00020000 	.word	0x00020000
+  4c:	0000047b 	.word	0x0000047b
+  50:	00000000 	.word	0x00000000
+	...
+Disassembly of section .debug_pubnames:
+
+00000000 <.debug_pubnames>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	00000021 	andeq	r0, r0, r1, lsr #32
+   4:	00000002 	andeq	r0, r0, r2
+   8:	00fc0000 	rscseq	r0, ip, r0
+   c:	00750000 	rsbseq	r0, r5, r0
+  10:	75660000 	strbvc	r0, [r6]!
+  14:	0031636e 	eorseq	r6, r1, lr, ror #6
+  18:	000000e3 	andeq	r0, r0, r3, ror #1
+	int k;
+	k=e+f;
+  1c:	6e69616d 	powvsez	f6, f1, #5.0
+  20:	00000000 	andeq	r0, r0, r0
+	...
+Disassembly of section .debug_aranges:
+
+00000000 <.debug_aranges>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	0000001c 	andeq	r0, r0, ip, lsl r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	00040000 	andeq	r0, r4, r0
+	...
+  14:	0000007c 	andeq	r0, r0, ip, ror r0
+	...
+Disassembly of section .debug_str:
+
+00000000 <.debug_str>:
+   0:	676e6f6c 	strbvs	r6, [lr, -ip, ror #30]!
+   4:	6e6f6c20 	cdpvs	12, 6, cr6, cr15, cr0, {1}
+   8:	6e692067 	cdpvs	0, 6, cr2, cr9, cr7, {3}
+   c:	682f0074 	stmdavs	pc!, {r2, r4, r5, r6}
+  10:	2f656d6f 	svccs	0x00656d6f
+  14:	646e696b 	strbtvs	r6, [lr], #-2411
+  18:	6564796c 	strbvs	r7, [r4, #-2412]!
+	int k;
+	k=e+f;
+  1c:	7365442f 	cmnvc	r5, #788529152	; 0x2f000000
+  20:	706f746b 	rsbvc	r7, pc, fp, ror #8
+  24:	6d72612f 	ldfvse	f6, [r2, #-188]!
+  28:	702f332d 	eorvc	r3, pc, sp, lsr #6
+}
+  2c:	31747261 	cmncc	r4, r1, ror #4
+  30:	6e612f30 	mcrvs	15, 3, r2, cr1, cr0, {1}
+  34:	73796c61 	cmnvc	r9, #24832	; 0x6100
+
+int main()
+{
+  38:	00435f65 	subeq	r5, r3, r5, ror #30
+  3c:	69736e75 	ldmdbvs	r3!, {r0, r2, r4, r5, r6, r9, sl, fp, sp, lr}^
+  40:	64656e67 	strbtvs	r6, [r5], #-3687
+    func1(1,2,3,4,5,6);
+  44:	746e6920 	strbtvc	r6, [lr], #-2336
+  48:	6e756600 	cdpvs	6, 7, cr6, cr5, cr0, {0}
+  4c:	6c003163 	stfvss	f3, [r0], {99}
+  50:	20676e6f 	rsbcs	r6, r7, pc, ror #28
+  54:	69736e75 	ldmdbvs	r3!, {r0, r2, r4, r5, r6, r9, sl, fp, sp, lr}^
+  58:	64656e67 	strbtvs	r6, [r5], #-3687
+  5c:	746e6920 	strbtvc	r6, [lr], #-2336
+  60:	6e6f6c00 	cdpvs	12, 6, cr6, cr15, cr0, {0}
+  64:	6f6c2067 	svcvs	0x006c2067
+    return 0;
+  68:	7520676e 	strvc	r6, [r0, #-1902]!
+}
+  6c:	6769736e 	strbvs	r7, [r9, -lr, ror #6]!
+  70:	2064656e 	rsbcs	r6, r4, lr, ror #10
+  74:	00746e69 	rsbseq	r6, r4, r9, ror #28
+  78:	726f6873 	rsbvc	r6, pc, #7536640	; 0x730000
+  7c:	6e752074 	mrcvs	0, 3, r2, cr5, cr4, {3}
+  80:	6e676973 	mcrvs	9, 3, r6, cr7, cr3, {3}
+  84:	69206465 	stmdbvs	r0!, {r0, r2, r5, r6, sl, sp, lr}
+  88:	7300746e 	movwvc	r7, #1134	; 0x46e
+  8c:	6b636174 	blvs	18d8664 <main+0x18d862c>
+  90:	00632e32 	rsbeq	r2, r3, r2, lsr lr
+  94:	72616863 	rsbvc	r6, r1, #6488064	; 0x630000
+  98:	736e7500 	cmnvc	lr, #0	; 0x0
+  9c:	656e6769 	strbvs	r6, [lr, #-1897]!
+  a0:	68632064 	stmdavs	r3!, {r2, r5, r6, sp}^
+  a4:	6d007261 	sfmvs	f7, 4, [r0, #-388]
+  a8:	006e6961 	rsbeq	r6, lr, r1, ror #18
+  ac:	676e6f6c 	strbvs	r6, [lr, -ip, ror #30]!
+  b0:	746e6920 	strbtvc	r6, [lr], #-2336
+  b4:	554e4700 	strbpl	r4, [lr, #-1792]
+  b8:	34204320 	strtcc	r4, [r0], #-800
+  bc:	322e332e 	eorcc	r3, lr, #-1207959552	; 0xb8000000
+  c0:	6f687300 	svcvs	0x00687300
+  c4:	69207472 	stmdbvs	r0!, {r1, r4, r5, r6, sl, ip, sp, lr}
+  c8:	7300746e 	movwvc	r7, #1134	; 0x46e
+  cc:	656e6769 	strbvs	r6, [lr, #-1897]!
+  d0:	68632064 	stmdavs	r3!, {r2, r5, r6, sp}^
+  d4:	Address 0x000000d4 is out of bounds.
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	43434700 	movtmi	r4, #14080	; 0x3700
+   4:	5328203a 	teqpl	r8, #58	; 0x3a
+   8:	6372756f 	cmnvs	r2, #465567744	; 0x1bc00000
+   c:	20797265 	rsbscs	r7, r9, r5, ror #4
+  10:	202b2b47 	eorcs	r2, fp, r7, asr #22
+  14:	6574694c 	ldrbvs	r6, [r4, #-2380]!
+  18:	30303220 	eorscc	r3, r0, r0, lsr #4
+	int k;
+	k=e+f;
+  1c:	2d337138 	ldfcss	f7, [r3, #-224]!
+  20:	20293237 	eorcs	r3, r9, r7, lsr r2
+  24:	2e332e34 	mrccs	14, 1, r2, cr3, cr4, {1}
+  28:	Address 0x00000028 is out of bounds.
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+#include <stdio.h>
+
+
+void func1(int a,int b,int c,int d,int e,int f)
+{
+   0:	00002741 	andeq	r2, r0, r1, asr #14
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	0000001d 	andeq	r0, r0, sp, lsl r0
+  10:	00543405 	subseq	r3, r4, r5, lsl #8
+  14:	01080206 	tsteq	r8, r6, lsl #4
+  18:	01140412 	tsteq	r4, r2, lsl r4
+	int k;
+	k=e+f;
+  1c:	03170115 	tsteq	r7, #1073741829	; 0x40000005
+  20:	01190118 	tsteq	r9, r8, lsl r1
+  24:	061e021a 	undefined

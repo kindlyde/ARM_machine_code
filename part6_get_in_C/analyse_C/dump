@@ -1,0 +1,342 @@
+
+stack:     file format elf32-littlearm
+
+Disassembly of section .text:
+
+00000000 <main>:
+#include <stdio.h>
+
+int main()
+{
+   0:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)  @将栈帧底部指针FP压入栈中；创建属于main函数的栈帧。
+   4:	e28db000 	add	fp, sp, #0	; 0x0   @fp指针为函数栈帧的底部，
+   8:	e24dd00c 	sub	sp, sp, #12	; 0xc	@sp指针为栈帧的顶部,同时为栈的栈顶。
+    int a;
+
+    a++;
+   c:	e51b3008 	ldr	r3, [fp, #-8]	@由此三句可知变量a在栈帧中执行了加法操作，及栈帧具有保存局部变量的作用
+  10:	e2833001 	add	r3, r3, #1	; 0x1
+  14:	e50b3008 	str	r3, [fp, #-8]
+
+    return a;
+  18:	e51b3008 	ldr	r3, [fp, #-8]
+}
+  1c:	e1a00003 	mov	r0, r3
+  20:	e28bd000 	add	sp, fp, #0	; 0x0
+  24:	e8bd0800 	pop	{fp}
+  28:	e12fff1e 	bx	lr
+Disassembly of section .debug_abbrev:
+
+00000000 <.debug_abbrev>:
+#include <stdio.h>
+
+int main()
+{
+   0:	25011101 	strcs	r1, [r1, #-257]
+   4:	030b130e 	movweq	r1, #45838	; 0xb30e
+   8:	110e1b0e 	tstne	lr, lr, lsl #22
+    int a;
+
+    a++;
+   c:	10011201 	andne	r1, r1, r1, lsl #4
+  10:	02000006 	andeq	r0, r0, #6	; 0x6
+  14:	0b0b0024 	bleq	2c00ac <main+0x2c00ac>
+
+    return a;
+  18:	0e030b3e 	vmoveq.16	d3[0], r0
+}
+  1c:	24030000 	strcs	r0, [r3]
+  20:	3e0b0b00 	fmacdcc	d0, d11, d0
+  24:	0008030b 	andeq	r0, r8, fp, lsl #6
+  28:	00240400 	eoreq	r0, r4, r0, lsl #8
+  2c:	0b3e0b0b 	bleq	f82c60 <main+0xf82c60>
+  30:	2e050000 	cdpcs	0, 0, cr0, cr5, cr0, {0}
+  34:	030c3f01 	movweq	r3, #52993	; 0xcf01
+  38:	3b0b3a0e 	blcc	2ce878 <main+0x2ce878>
+  3c:	1113490b 	tstne	r3, fp, lsl #18
+  40:	40011201 	andmi	r1, r1, r1, lsl #4
+  44:	06000006 	streq	r0, [r0], -r6
+  48:	08030034 	stmdaeq	r3, {r2, r4, r5}
+  4c:	0b3b0b3a 	bleq	ec2d3c <main+0xec2d3c>
+  50:	0a021349 	beq	84d7c <main+0x84d7c>
+  54:	Address 0x00000054 is out of bounds.
+
+Disassembly of section .debug_info:
+
+00000000 <.debug_info>:
+#include <stdio.h>
+
+int main()
+{
+   0:	00000097 	muleq	r0, r7, r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	01040000 	tsteq	r4, r0
+    int a;
+
+    a++;
+   c:	000000af 	andeq	r0, r0, pc, lsr #1
+  10:	0000a601 	andeq	sl, r0, r1, lsl #12
+  14:	00007800 	andeq	r7, r0, r0, lsl #16
+
+    return a;
+  18:	00000000 	andeq	r0, r0, r0
+}
+  1c:	00002c00 	andeq	r2, r0, r0, lsl #24
+  20:	00000000 	andeq	r0, r0, r0
+  24:	07040200 	streq	r0, [r4, -r0, lsl #4]
+  28:	0000000e 	andeq	r0, r0, lr
+  2c:	49080102 	stmdbmi	r8, {r1, r8}
+  30:	02000000 	andeq	r0, r0, #0	; 0x0
+  34:	00650702 	rsbeq	r0, r5, r2, lsl #14
+  38:	04020000 	streq	r0, [r2]
+  3c:	00001b07 	andeq	r1, r0, r7, lsl #22
+  40:	06010200 	streq	r0, [r1], -r0, lsl #4
+  44:	000000c5 	andeq	r0, r0, r5, asr #1
+  48:	bb050202 	bllt	140810 <main+0x140810>
+  4c:	03000000 	movweq	r0, #0	; 0x0
+  50:	6e690504 	cdpvs	5, 6, cr0, cr9, cr4, {0}
+  54:	08020074 	stmdaeq	r2, {r2, r4, r5, r6}
+  58:	00000005 	andeq	r0, r0, r5
+  5c:	07080200 	streq	r0, [r8, -r0, lsl #4]
+  60:	0000002d 	andeq	r0, r0, sp, lsr #32
+  64:	5c050402 	cfstrspl	mvf0, [r5], {2}
+  68:	04000000 	streq	r0, [r0]
+  6c:	01020704 	tsteq	r2, r4, lsl #14
+  70:	00004408 	andeq	r4, r0, r8, lsl #8
+  74:	57010500 	strpl	r0, [r1, -r0, lsl #10]
+  78:	01000000 	tsteq	r0, r0
+  7c:	00004f04 	andeq	r4, r0, r4, lsl #30
+  80:	00000000 	andeq	r0, r0, r0
+  84:	00002c00 	andeq	r2, r0, r0, lsl #24
+  88:	00000000 	andeq	r0, r0, r0
+  8c:	00610600 	rsbeq	r0, r1, r0, lsl #12
+  90:	004f0501 	subeq	r0, pc, r1, lsl #10
+  94:	91020000 	tstls	r2, r0
+  98:	Address 0x00000098 is out of bounds.
+
+Disassembly of section .debug_line:
+
+00000000 <.debug_line>:
+#include <stdio.h>
+
+int main()
+{
+   0:	00000035 	andeq	r0, r0, r5, lsr r0
+   4:	001f0002 	andseq	r0, pc, r2
+   8:	01020000 	tsteq	r2, r0
+    int a;
+
+    a++;
+   c:	000d0efb 	strdeq	r0, [sp], -fp
+  10:	01010101 	tsteq	r1, r1, lsl #2
+  14:	01000000 	tsteq	r0, r0
+
+    return a;
+  18:	00010000 	andeq	r0, r1, r0
+}
+  1c:	63617473 	cmnvs	r1, #1929379840	; 0x73000000
+  20:	632e316b 	teqvs	lr, #-1073741798	; 0xc000001a
+  24:	00000000 	andeq	r0, r0, r0
+  28:	02050000 	andeq	r0, r5, #0	; 0x0
+  2c:	00000000 	andeq	r0, r0, r0
+  30:	2f686915 	svccs	0x00686915
+  34:	01000802 	tsteq	r0, r2, lsl #16
+  38:	Address 0x00000038 is out of bounds.
+
+Disassembly of section .debug_frame:
+
+00000000 <.debug_frame>:
+#include <stdio.h>
+
+int main()
+{
+   0:	0000000c 	.word	0x0000000c
+   4:	ffffffff 	.word	0xffffffff
+   8:	7c010001 	.word	0x7c010001
+    int a;
+
+    a++;
+   c:	000d0c0e 	.word	0x000d0c0e
+  10:	00000014 	.word	0x00000014
+	...
+
+    return a;
+}
+  1c:	0000002c 	.word	0x0000002c
+  20:	8b040e44 	.word	0x8b040e44
+  24:	0b0d4401 	.word	0x0b0d4401
+Disassembly of section .debug_loc:
+
+00000000 <.debug_loc>:
+#include <stdio.h>
+
+int main()
+{
+   0:	00000000 	.word	0x00000000
+   4:	00000004 	.word	0x00000004
+   8:	045d0001 	.word	0x045d0001
+    int a;
+
+    a++;
+   c:	08000000 	.word	0x08000000
+  10:	02000000 	.word	0x02000000
+  14:	08047d00 	.word	0x08047d00
+
+    return a;
+  18:	2c000000 	.word	0x2c000000
+}
+  1c:	02000000 	.word	0x02000000
+  20:	00047b00 	.word	0x00047b00
+  24:	00000000 	.word	0x00000000
+  28:	Address 0x00000028 is out of bounds.
+
+Disassembly of section .debug_pubnames:
+
+00000000 <.debug_pubnames>:
+#include <stdio.h>
+
+int main()
+{
+   0:	00000017 	andeq	r0, r0, r7, lsl r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	009b0000 	addseq	r0, fp, r0
+    int a;
+
+    a++;
+   c:	00750000 	rsbseq	r0, r5, r0
+  10:	616d0000 	cmnvs	sp, r0
+  14:	00006e69 	andeq	r6, r0, r9, ror #28
+
+    return a;
+  18:	Address 0x00000018 is out of bounds.
+
+Disassembly of section .debug_aranges:
+
+00000000 <.debug_aranges>:
+#include <stdio.h>
+
+int main()
+{
+   0:	0000001c 	andeq	r0, r0, ip, lsl r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	00040000 	andeq	r0, r4, r0
+	...
+    int a;
+
+    a++;
+  14:	0000002c 	andeq	r0, r0, ip, lsr #32
+	...
+Disassembly of section .debug_str:
+
+00000000 <.debug_str>:
+#include <stdio.h>
+
+int main()
+{
+   0:	676e6f6c 	strbvs	r6, [lr, -ip, ror #30]!
+   4:	6e6f6c20 	cdpvs	12, 6, cr6, cr15, cr0, {1}
+   8:	6e692067 	cdpvs	0, 6, cr2, cr9, cr7, {3}
+    int a;
+
+    a++;
+   c:	6e750074 	mrcvs	0, 3, r0, cr5, cr4, {3}
+  10:	6e676973 	mcrvs	9, 3, r6, cr7, cr3, {3}
+  14:	69206465 	stmdbvs	r0!, {r0, r2, r5, r6, sl, sp, lr}
+
+    return a;
+  18:	6c00746e 	cfstrsvs	mvf7, [r0], {110}
+}
+  1c:	20676e6f 	rsbcs	r6, r7, pc, ror #28
+  20:	69736e75 	ldmdbvs	r3!, {r0, r2, r4, r5, r6, r9, sl, fp, sp, lr}^
+  24:	64656e67 	strbtvs	r6, [r5], #-3687
+  28:	746e6920 	strbtvc	r6, [lr], #-2336
+  2c:	6e6f6c00 	cdpvs	12, 6, cr6, cr15, cr0, {0}
+  30:	6f6c2067 	svcvs	0x006c2067
+  34:	7520676e 	strvc	r6, [r0, #-1902]!
+  38:	6769736e 	strbvs	r7, [r9, -lr, ror #6]!
+  3c:	2064656e 	rsbcs	r6, r4, lr, ror #10
+  40:	00746e69 	rsbseq	r6, r4, r9, ror #28
+  44:	72616863 	rsbvc	r6, r1, #6488064	; 0x630000
+  48:	736e7500 	cmnvc	lr, #0	; 0x0
+  4c:	656e6769 	strbvs	r6, [lr, #-1897]!
+  50:	68632064 	stmdavs	r3!, {r2, r5, r6, sp}^
+  54:	6d007261 	sfmvs	f7, 4, [r0, #-388]
+  58:	006e6961 	rsbeq	r6, lr, r1, ror #18
+  5c:	676e6f6c 	strbvs	r6, [lr, -ip, ror #30]!
+  60:	746e6920 	strbtvc	r6, [lr], #-2336
+  64:	6f687300 	svcvs	0x00687300
+  68:	75207472 	strvc	r7, [r0, #-1138]!
+  6c:	6769736e 	strbvs	r7, [r9, -lr, ror #6]!
+  70:	2064656e 	rsbcs	r6, r4, lr, ror #10
+  74:	00746e69 	rsbseq	r6, r4, r9, ror #28
+  78:	6d6f682f 	stclvs	8, cr6, [pc, #-188]!
+  7c:	696b2f65 	stmdbvs	fp!, {r0, r2, r5, r6, r8, r9, sl, fp, sp}^
+  80:	796c646e 	stmdbvc	ip!, {r1, r2, r3, r5, r6, sl, sp, lr}^
+  84:	442f6564 	strtmi	r6, [pc], #1380	; 8c <.debug_str+0x8c>
+  88:	746b7365 	strbtvc	r7, [fp], #-869
+  8c:	612f706f 	teqvs	pc, pc, rrx
+  90:	332d6d72 	teqcc	sp, #7296	; 0x1c80
+  94:	7261702f 	rsbvc	r7, r1, #47	; 0x2f
+  98:	2f303174 	svccs	0x00303174
+  9c:	6c616e61 	stclvs	14, cr6, [r1], #-388
+  a0:	5f657379 	svcpl	0x00657379
+  a4:	74730043 	ldrbtvc	r0, [r3], #-67
+  a8:	316b6361 	cmncc	fp, r1, ror #6
+  ac:	4700632e 	strmi	r6, [r0, -lr, lsr #6]
+  b0:	4320554e 	teqmi	r0, #327155712	; 0x13800000
+  b4:	332e3420 	teqcc	lr, #536870912	; 0x20000000
+  b8:	7300322e 	movwvc	r3, #558	; 0x22e
+  bc:	74726f68 	ldrbtvc	r6, [r2], #-3944
+  c0:	746e6920 	strbtvc	r6, [lr], #-2336
+  c4:	67697300 	strbvs	r7, [r9, -r0, lsl #6]!
+  c8:	2064656e 	rsbcs	r6, r4, lr, ror #10
+  cc:	72616863 	rsbvc	r6, r1, #6488064	; 0x630000
+	...
+Disassembly of section .comment:
+
+00000000 <.comment>:
+#include <stdio.h>
+
+int main()
+{
+   0:	43434700 	movtmi	r4, #14080	; 0x3700
+   4:	5328203a 	teqpl	r8, #58	; 0x3a
+   8:	6372756f 	cmnvs	r2, #465567744	; 0x1bc00000
+    int a;
+
+    a++;
+   c:	20797265 	rsbscs	r7, r9, r5, ror #4
+  10:	202b2b47 	eorcs	r2, fp, r7, asr #22
+  14:	6574694c 	ldrbvs	r6, [r4, #-2380]!
+
+    return a;
+  18:	30303220 	eorscc	r3, r0, r0, lsr #4
+}
+  1c:	2d337138 	ldfcss	f7, [r3, #-224]!
+  20:	20293237 	eorcs	r3, r9, r7, lsr r2
+  24:	2e332e34 	mrccs	14, 1, r2, cr3, cr4, {1}
+  28:	Address 0x00000028 is out of bounds.
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+#include <stdio.h>
+
+int main()
+{
+   0:	00002741 	andeq	r2, r0, r1, asr #14
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+    int a;
+
+    a++;
+   c:	0000001d 	andeq	r0, r0, sp, lsl r0
+  10:	00543405 	subseq	r3, r4, r5, lsl #8
+  14:	01080206 	tsteq	r8, r6, lsl #4
+
+    return a;
+  18:	01140412 	tsteq	r4, r2, lsl r4
+}
+  1c:	03170115 	tsteq	r7, #1073741829	; 0x40000005
+  20:	01190118 	tsteq	r9, r8, lsl r1
+  24:	061e021a 	undefined

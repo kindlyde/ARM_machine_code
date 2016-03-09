@@ -1,0 +1,126 @@
+.text                 @9、19   6410内存初始化
+.global _start
+_start:
+		b reset
+		ldr pc,_undefined_instruction 
+		ldr pc,_software_interrupt 
+		ldr pc,_prefetch_abort 
+		ldr pc,_data_abort 
+		ldr pc,_not_used 
+		ldr pc,_irq 
+		ldr pc,_fiq
+		ldr pc,_reset
+		
+		
+_undefined_instruction: .word undefined_instruction  
+_software_interrupt: .word software_interrupt
+_prefetch_abort: .word prefetch_abort
+_data_abort: .word data_abort   ;0x00000014
+_not_used: .word not_used   ;注：查看手册0x00000014地址未代表任何异常
+_irq: .word irq             ;0x00000018
+_fiq: .word fiq
+_reset: .word reset
+
+undefined_instruction:
+		nop
+software_interrupt:
+		nop
+prefetch_abort:
+		nop
+data_abort:
+		nop
+not_used:
+		nop
+irq:
+		nop
+fiq:
+		nop
+reset:
+		bl set_svc
+		bl set_peri_port  @6410需初始化其外设
+		bl disable_watchdog
+		bl disable_interrupt
+		bl disable_mmu
+		bl init_clock
+		bl mem_init
+		bl light_led
+		
+set_svc:
+		mrs r0, cpsr
+		bic r0, r0, #0x1f  ;将CPSR的[4:0]位清零
+		orr r0, r0, #0xd3  ;屏蔽所有中断，并设	置为svc模式  I、F位置位
+		msr cpsr, r0
+		mov pc, lr
+		
+set_peri_port:
+		ldr r0, =0x70000000   ;其外设基地址，开发板手册208
+		orr r0, r0, #0x13	;外设重映射的内存大小256M，处理器手册263
+		mcr p15,0,r0,c15,c2,4  ;设置c15
+		mov pc, lr
+
+#define pWTCON 0x7e004000	;宏定义定义寄存器地址
+disable_watchdog:
+		ldr r0, =pWTCON
+		mov r1,#0x0		;使用MOV装载至寄存器，通过寄存器对地址单元写入数?
+		str r1, [r0]
+		mov pc,lr
+		
+disable_interrupt:
+		mvn r1,#0x0      ;数据取反后传送，
+		ldr r0,=0x71200014  ;vic0intenclear 中断屏蔽寄存器，写1有效
+		str r1,[r0]
+		
+		ldr r0,=0x71300014  ;vic1intenclear 中断屏蔽寄存器，写1有效
+		str r1,[r0]
+		mov pc,lr
+		
+disable_mmu:
+		mcr p15,0,r0,c7,c7,0	;使cache中的数据失效
+		mrc p15,0,r0,c1,c0,0	;读取c1中的值--control register
+		bic r0, r0, #0x00000007 	;[2:0]清零失能
+		mcr p15,0,r0,c1,c0,0	;写入
+		mov pc, lr
+		
+#define CLK_DIV0 0x7E00F020
+#define OTHERS 0x7E00F900
+#define APLL_CON 0x7E00F00C	@APLL锁相环控制器，手册141
+#define MPLL_CON 0x7E00F010	@MPLL锁相环控制器，手册141
+#define CLK_SRC 0x7E00F01C
+#define PLL_VAL ((266<<16)|(3<<8)|(1<<0)|(1<<31))  @设置锁相环控制器相应位，控制锁相环PLL的输出频率
+#define DIV_VAL  ((0x0<<0)|(0x1<<8)|(0x1<<9)|(0x3<<12))  @设置分频因子divider ratio 。。采用位与的方式		
+init_clock:		
+		ldr r0, =CLK_DIV0  @通过CLK_DIV0寄存器设置分频因子
+		mov r1, #DIV_VAL
+		str r1, [r0]
+		
+						@设置CPU工作在异步模式，处理器手册169页
+		ldr r0, =OTHERS
+		ldr r1, [r0]
+		bic r1, r1, #0xc0  @[7:6]位同时置零 
+		str r1, [r0]
+		
+		ldr r0, =APLL_CON  @设置锁相环控制器（APLL\MPLL）相应位，控制锁相环输出频率
+		ldr r1, =PLL_VAL
+		str r1, [r0]
+		
+		ldr r0, =MPLL_CON
+		ldr r1, =PLL_VAL
+		str r1, [r0]
+		
+		ldr r0, =CLK_SRC  @6410需为分频器选择时钟源[2:0]
+		mov r1,#0x3
+		str r1,[r0]
+		mov pc, lr
+		
+#define GPMCON 0x7F008820
+#define GPMDAT 0x7F008824
+light_led:
+		ldr r0, =GPMCON
+		ldr r1,  =0x1001
+		str r1, [r0]
+		
+		ldr r0, =GPMDAT
+		ldr r1, =0x36
+		str r1, [r0]
+		mov pc, lr
+		
